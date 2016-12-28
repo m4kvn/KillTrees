@@ -7,10 +7,10 @@ import org.bukkit.plugin.java.JavaPlugin
 class KillTrees : JavaPlugin() {
 
     override fun onEnable() {
-        this.logger.severe("KillTrees onEnable!!")
+        logger.info("KillTrees onEnable!!")
     }
 
     override fun onDisable() {
-        this.logger.severe("KillTrees onDisable!!")
+        logger.info("KillTrees onDisable!!")
     }
 }
