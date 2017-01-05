@@ -69,11 +69,9 @@ class BlockBreakEventListener(plugin: JavaPlugin) : Listener {
             }
         }
 
-//        checkedBlocks.remove(event.block)
-
         var durability = itemStack.durability
         var maxDurability = itemStack.type.maxDurability
-        var expectedDurability = itemStack.durability + checkedBlocks.size
+        var expectedDurability = durability + checkedBlocks.size
         var itemBreakingFrag = false
 
         if (expectedDurability >= maxDurability) {
@@ -85,18 +83,22 @@ class BlockBreakEventListener(plugin: JavaPlugin) : Listener {
 
         checkedBlocks.forEach { it.breakNaturally(itemStack) }
 
-        itemStack.durability = durability.plus(checkedBlocks.size).toShort()
+        itemStack.durability = itemStack.durability.plus(checkedBlocks.size).toShort()
+
+        var msg = StringBuilder()
 
         if (itemBreakingFrag) {
             player.world.playSound(player.location, Sound.ITEM_SHIELD_BREAK, 1f, 1f)
             player.itemInHand = ItemStack(Material.AIR)
             player.sendMessage("アイテムが壊れた")
         } else {
-            player.sendMessage("アイテムの耐久値: ${maxDurability - durability}" +
-                    " -> ${maxDurability - itemStack.durability}")
+            msg.append("耐久値: ${maxDurability - durability} " +
+                    "-> ${maxDurability - itemStack.durability}")
         }
 
-        player.sendMessage("壊したブロック数: ${checkedBlocks.size}")
+        msg.append(", ブロック数: ${checkedBlocks.size}")
+
+        player.sendMessage(msg.toString())
     }
 
     fun isLog(block: Block): Boolean {
