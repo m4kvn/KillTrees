@@ -15,6 +15,8 @@ data class Configs(
         val onToolBrokenMsg: Boolean = false,
 
         @SerializedName("道具の耐久値と壊したブロックの数を表示する")
-        val onToolDurabilityMsg: Boolean = true
+        val onToolDurabilityMsg: Boolean = true,
 
+        @SerializedName("一度に壊せるブロック数の上限")
+        val maxBlockAmount: Int = 500
 )

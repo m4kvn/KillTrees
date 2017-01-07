@@ -37,11 +37,17 @@ class BlockBreakEventListener : Listener {
                 blockFaces.forEach {
                     val relativeBlock = block.getRelative(it)
 
+                    if (checkedBlocks.size >= configs.maxBlockAmount) return@apply
+
                     blockFaces
                             .filterNot { checkedBlocks.contains(relativeBlock.getRelative(it)) }
                             .filterNot { unCheckedBlocks.contains(relativeBlock.getRelative(it)) }
                             .filter { isLog(relativeBlock.getRelative(it)) }
-                            .forEach { unCheckedBlocks.add(relativeBlock.getRelative(it)) }
+                            .forEach {
+                                unCheckedBlocks.add(relativeBlock.getRelative(it))
+
+                                if (checkedBlocks.size >= configs.maxBlockAmount) return@apply
+                            }
                 }
             }
         }
