@@ -15,7 +15,9 @@ class KillTrees : JavaPlugin() {
         logger.info("KillTrees onEnable!!")
 
         plugin = this
+
         server.pluginManager.registerEvents(BlockBreakEventListener(), this)
+
         loadConfigsFromJson(File(dataFolder, "config.json"))
     }
 

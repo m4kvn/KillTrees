@@ -16,4 +16,5 @@ public abstract class BaseEvent extends Event {
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }
+
 }

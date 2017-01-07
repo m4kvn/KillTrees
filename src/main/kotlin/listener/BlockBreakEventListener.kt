@@ -1,16 +1,16 @@
 package listener
 
+import blockFaces
+import callEvent
 import config.configs
-import org.bukkit.Material
-import org.bukkit.Sound
+import events.*
+import haveAxe
+import isLog
 import org.bukkit.block.Block
-import org.bukkit.block.BlockFace
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
-import org.bukkit.inventory.ItemStack
 
 /**
  * Created by masahiro on 2016/12/29.
@@ -26,85 +26,50 @@ class BlockBreakEventListener : Listener {
             !haveAxe(event.player) -> return
         }
 
-        var unCheckedBlocks = mutableListOf(event.block)
-        var checkedBlocks = arrayListOf<Block>()
+        val blocks = mutableListOf<Block>().apply {
+            val unCheckedBlocks = mutableListOf(event.block)
+            val checkedBlocks = this
 
-        while (unCheckedBlocks.isNotEmpty()) {
+            while (unCheckedBlocks.isNotEmpty()) {
+                val block = unCheckedBlocks.removeAt(0).apply { checkedBlocks.add(this) }
 
-            var block = unCheckedBlocks.removeAt(0)
+                blockFaces.forEach {
+                    val relativeBlock = block.getRelative(it)
 
-            checkedBlocks.add(block)
-
-            blockFaces.forEach {
-                var relativeBlock = block.getRelative(it)
-
-                blockFaces
-                        .filterNot { checkedBlocks.contains(relativeBlock.getRelative(it)) }
-                        .filterNot { unCheckedBlocks.contains(relativeBlock.getRelative(it)) }
-                        .filter { isLog(relativeBlock.getRelative(it)) }
-                        .forEach { unCheckedBlocks.add(relativeBlock.getRelative(it)) }
+                    blockFaces
+                            .filterNot { checkedBlocks.contains(relativeBlock.getRelative(it)) }
+                            .filterNot { unCheckedBlocks.contains(relativeBlock.getRelative(it)) }
+                            .filter { isLog(relativeBlock.getRelative(it)) }
+                            .forEach { unCheckedBlocks.add(relativeBlock.getRelative(it)) }
+                }
             }
         }
 
-        var player = event.player
-        var itemStack = player.inventory.itemInMainHand
+        val tool = event.player.inventory.itemInMainHand
 
-        var durability = itemStack.durability
-        var maxDurability = itemStack.type.maxDurability
-        var expectedDurability = durability + checkedBlocks.size
-        var itemBreakingFrag = false
+        val isToolBreak = tool.durability + blocks.size >= tool.type.maxDurability
 
-        if (expectedDurability >= maxDurability) {
-            itemBreakingFrag = true
-            kotlin.repeat(expectedDurability - maxDurability, {
-                checkedBlocks.removeAt(checkedBlocks.lastIndex)
-            })
+        val overBlockAmount = if (isToolBreak) tool.durability + blocks.size - tool.type.maxDurability else 0
+
+        val finalBlocks = blocks.toMutableList().apply {
+            if (isToolBreak) kotlin.repeat(overBlockAmount) { removeAt(lastIndex) }
         }
 
-        checkedBlocks.forEach { it.breakNaturally(itemStack) }
+        callEvent(BreakBlocksEvent(finalBlocks, tool)).breakBlocks()
 
-        itemStack.durability = itemStack.durability.plus(checkedBlocks.size).toShort()
+        var message = ""
 
-        if (itemBreakingFrag) {
-            player.world.playSound(player.location, Sound.ITEM_SHIELD_BREAK, 1f, 1f)
-            player.inventory.itemInMainHand = ItemStack(Material.AIR)
+        if (isToolBreak) {
+            callEvent(BreakToolEvent(event.player)).breakTool()
+            if (configs.onToolBrokenMsg) message = "道具が壊れました, ブロック数: ${finalBlocks.size}"
+        } else {
+            callEvent(ChangeToolDurabilityEvent(tool, finalBlocks.size)).changeToolDurability()
+            if (configs.onToolDurabilityMsg) {
+                message = "耐久値: ${tool.type.maxDurability - tool.durability}, " +
+                        "ブロック数: ${finalBlocks.size}"
+            }
         }
 
-        player.sendMessage(buildString {
-            val oldDura = maxDurability - durability
-            val newDura = maxDurability - itemStack.durability
-            if (configs.onToolBrokenMsg.and(itemBreakingFrag))appendln("アイテムが壊れた")
-            if (configs.onToolDurabilityMsg)
-                append("耐久値: $oldDura -> $newDura, ブロック数: ${checkedBlocks.size}")
-        })
+        callEvent(TreeKillMessageEvent(message, event.player)).sendMessage()
     }
 }
-
-fun haveAxe(player: Player): Boolean {
-    when (player.inventory.itemInMainHand.type) {
-        Material.DIAMOND_AXE -> return true
-        Material.GOLD_AXE    -> return true
-        Material.IRON_AXE    -> return true
-        Material.STONE_AXE   -> return true
-        Material.WOOD_AXE    -> return true
-        else                 -> return false
-    }
-}
-
-fun isLog(block: Block): Boolean {
-    when (block.type) {
-        Material.LOG   -> return true
-        Material.LOG_2 -> return true
-        else           -> return false
-    }
-}
-
-val blockFaces = listOf<BlockFace>(
-        BlockFace.SELF,
-        BlockFace.UP,
-        BlockFace.DOWN,
-        BlockFace.NORTH,
-        BlockFace.SOUTH,
-        BlockFace.WEST,
-        BlockFace.EAST
-)
