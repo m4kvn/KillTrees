@@ -25,6 +25,3 @@ fun loadConfigsFromJson(file: File) {
         file.writeText(GsonBuilder().setPrettyPrinting().create().toJson(configs))
     }
 }
-
-fun main(args: Array<String>) {
-}

@@ -5,6 +5,7 @@ import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -16,25 +17,15 @@ import org.bukkit.inventory.ItemStack
  */
 
 class BlockBreakEventListener : Listener {
-    var blockFaces = listOf<BlockFace>(
-            BlockFace.SELF,
-            BlockFace.UP,
-            BlockFace.DOWN,
-            BlockFace.NORTH,
-            BlockFace.SOUTH,
-            BlockFace.WEST,
-            BlockFace.EAST
-    )
 
     @EventHandler(priority = EventPriority.MONITOR)
     fun onBlockBreak(event: BlockBreakEvent) {
+
         when {
-            !isLog(event.block)                             -> return
-            !haveAxe(event.player.inventory.itemInMainHand) -> return
+            !isLog(event.block)    -> return
+            !haveAxe(event.player) -> return
         }
 
-        var player = event.player
-        var itemStack = player.inventory.itemInMainHand
         var unCheckedBlocks = mutableListOf(event.block)
         var checkedBlocks = arrayListOf<Block>()
 
@@ -47,12 +38,16 @@ class BlockBreakEventListener : Listener {
             blockFaces.forEach {
                 var relativeBlock = block.getRelative(it)
 
-                blockFaces.filterNot { checkedBlocks.contains(relativeBlock.getRelative(it)) }
+                blockFaces
+                        .filterNot { checkedBlocks.contains(relativeBlock.getRelative(it)) }
                         .filterNot { unCheckedBlocks.contains(relativeBlock.getRelative(it)) }
                         .filter { isLog(relativeBlock.getRelative(it)) }
                         .forEach { unCheckedBlocks.add(relativeBlock.getRelative(it)) }
             }
         }
+
+        var player = event.player
+        var itemStack = player.inventory.itemInMainHand
 
         var durability = itemStack.durability
         var maxDurability = itemStack.type.maxDurability
@@ -83,23 +78,33 @@ class BlockBreakEventListener : Listener {
                 append("耐久値: $oldDura -> $newDura, ブロック数: ${checkedBlocks.size}")
         })
     }
+}
 
-    fun isLog(block: Block): Boolean {
-        when (block.type) {
-            Material.LOG   -> return true
-            Material.LOG_2 -> return true
-            else           -> return false
-        }
-    }
-
-    fun haveAxe(itemStack: ItemStack): Boolean {
-        when (itemStack.type) {
-            Material.DIAMOND_AXE -> return true
-            Material.GOLD_AXE    -> return true
-            Material.IRON_AXE    -> return true
-            Material.STONE_AXE   -> return true
-            Material.WOOD_AXE    -> return true
-            else                 -> return false
-        }
+fun haveAxe(player: Player): Boolean {
+    when (player.inventory.itemInMainHand.type) {
+        Material.DIAMOND_AXE -> return true
+        Material.GOLD_AXE    -> return true
+        Material.IRON_AXE    -> return true
+        Material.STONE_AXE   -> return true
+        Material.WOOD_AXE    -> return true
+        else                 -> return false
     }
 }
+
+fun isLog(block: Block): Boolean {
+    when (block.type) {
+        Material.LOG   -> return true
+        Material.LOG_2 -> return true
+        else           -> return false
+    }
+}
+
+val blockFaces = listOf<BlockFace>(
+        BlockFace.SELF,
+        BlockFace.UP,
+        BlockFace.DOWN,
+        BlockFace.NORTH,
+        BlockFace.SOUTH,
+        BlockFace.WEST,
+        BlockFace.EAST
+)
