@@ -6,6 +6,7 @@ import config.configs
 import events.*
 import haveAxe
 import isLog
+import org.bukkit.GameMode
 import org.bukkit.block.Block
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -47,9 +48,19 @@ class BlockBreakEventListener : Listener {
 
         val tool = event.player.inventory.itemInMainHand
 
-        val isToolBreak = tool.durability + blocks.size >= tool.type.maxDurability
+        var isToolBreak = tool.durability + blocks.size >= tool.type.maxDurability
 
-        val overBlockAmount = if (isToolBreak) tool.durability + blocks.size - tool.type.maxDurability else 0
+        var overBlockAmount = if (isToolBreak) tool.durability + blocks.size - tool.type.maxDurability else 0
+
+        var finalBlockAmount = blocks.size - overBlockAmount
+
+        if (event.player.gameMode == GameMode.CREATIVE) {
+            if (!configs.onCreativeDurabilityReduce) {
+                isToolBreak = false
+                overBlockAmount = 0
+                finalBlockAmount = 0
+            }
+        }
 
         val finalBlocks = blocks.toMutableList().apply {
             if (isToolBreak) kotlin.repeat(overBlockAmount) { removeAt(lastIndex) }
@@ -63,7 +74,7 @@ class BlockBreakEventListener : Listener {
             callEvent(BreakToolEvent(event.player)).breakTool()
             if (configs.onToolBrokenMsg) message = "道具が壊れました, ブロック数: ${finalBlocks.size}"
         } else {
-            callEvent(ChangeToolDurabilityEvent(tool, finalBlocks.size)).changeToolDurability()
+            callEvent(ChangeToolDurabilityEvent(tool, finalBlockAmount)).changeToolDurability()
             if (configs.onToolDurabilityMsg) {
                 message = "耐久値: ${tool.type.maxDurability - tool.durability}, " +
                         "ブロック数: ${finalBlocks.size}"
