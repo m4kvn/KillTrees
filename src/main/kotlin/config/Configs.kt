@@ -8,6 +8,6 @@ import com.squareup.moshi.Json
 
 data class Configs(
         @Json(name = "クリエイティブモード時に道具の耐久値を減らす") val onCreativeDurabilityReduce: Boolean = false,
-        @Json(name = "道具が壊れた時にメッセージを表示する") val onToolBrokenMsg:Boolean = true,
-        @Json(name = "道具の耐久値をメッセージで表示する") val onToolDurabilityMsg:Boolean = true
+        @Json(name = "道具が壊れたことを表示する") val onToolBrokenMsg: Boolean = false,
+        @Json(name = "道具の耐久値と壊したブロックの数を表示する") val onToolDurabilityMsg: Boolean = true
 )

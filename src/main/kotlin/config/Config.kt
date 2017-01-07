@@ -1,9 +1,7 @@
 package config
 
 import com.squareup.moshi.Moshi
-import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
-import org.yaml.snakeyaml.Yaml
 import java.io.File
 
 /**
