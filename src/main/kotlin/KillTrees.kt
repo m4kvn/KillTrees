@@ -16,8 +16,7 @@ class KillTrees : JavaPlugin() {
 
         plugin = this
         server.pluginManager.registerEvents(BlockBreakEventListener(), this)
-        configs = loadConfigsFromJson(File(dataFolder, "config.json"))
-        println(configs)
+        loadConfigsFromJson(File(dataFolder, "config.json"))
     }
 
     override fun onDisable() {

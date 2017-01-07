@@ -1,6 +1,7 @@
 package config
 
-import com.squareup.moshi.Moshi
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
@@ -10,19 +11,20 @@ import java.io.File
 var plugin: JavaPlugin? = null
 var configs: Configs = Configs()
 
-fun loadConfigsFromJson(file: File) : Configs {
+fun loadConfigsFromJson(file: File) {
 
     if (!file.parentFile.exists()) {
         file.parentFile.mkdirs()
     }
 
-    val adapter = Moshi.Builder().build().adapter(Configs::class.java)
-
     if (!file.exists()) {
-        plugin?.getResource("config.json")?.copyTo(file.outputStream())
         file.createNewFile()
-        return configs
+        file.writeText(GsonBuilder().setPrettyPrinting().create().toJson(configs))
     } else {
-        return adapter.fromJson(file.readText())
+        configs = Gson().fromJson(file.readText(), configs.javaClass)
+        file.writeText(GsonBuilder().setPrettyPrinting().create().toJson(configs))
     }
+}
+
+fun main(args: Array<String>) {
 }
