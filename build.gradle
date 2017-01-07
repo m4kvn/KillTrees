@@ -52,3 +52,8 @@ dependencies {
 jar {
     from configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }
 }
+
+sourceSets {
+    main.kotlin.srcDirs = ['src/main/java', 'src/main/kotlin']
+    main.resources.srcDirs = ['src/main/resources']
+}
