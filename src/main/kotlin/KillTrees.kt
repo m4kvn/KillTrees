@@ -1,5 +1,6 @@
 import config.configs
-import config.loadConfigs
+import config.loadConfigsFromJson
+import config.plugin
 import listener.BlockBreakEventListener
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
@@ -13,8 +14,10 @@ class KillTrees : JavaPlugin() {
     override fun onEnable() {
         logger.info("KillTrees onEnable!!")
 
-        server.pluginManager.registerEvents(BlockBreakEventListener(this), this)
-        configs = loadConfigs(File(dataFolder, "config.yml"))
+        plugin = this
+        server.pluginManager.registerEvents(BlockBreakEventListener(), this)
+        configs = loadConfigsFromJson(File(dataFolder, "config.json"))
+        println(configs)
     }
 
     override fun onDisable() {

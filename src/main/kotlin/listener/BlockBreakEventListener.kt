@@ -25,8 +25,7 @@ import java.util.*
  * Created by masahiro on 2016/12/29.
  */
 
-class BlockBreakEventListener(plugin: JavaPlugin) : Listener {
-    var plugin = plugin
+class BlockBreakEventListener : Listener {
     var blockFaces = listOf<BlockFace>(
             BlockFace.SELF,
             BlockFace.UP,
@@ -39,11 +38,13 @@ class BlockBreakEventListener(plugin: JavaPlugin) : Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     fun onBlockBreak(event: BlockBreakEvent) {
-        if (!isLog(event.block)) return
-        if (!haveAxe(event.player.itemInHand)) return
+        when {
+            !isLog(event.block)                             -> return
+            !haveAxe(event.player.inventory.itemInMainHand) -> return
+        }
 
         var player = event.player
-        var itemStack = player.itemInHand
+        var itemStack = player.inventory.itemInMainHand
         var unCheckedBlocks = mutableListOf(event.block)
         var checkedBlocks = arrayListOf<Block>()
 
@@ -56,17 +57,22 @@ class BlockBreakEventListener(plugin: JavaPlugin) : Listener {
             blockFaces.forEach {
                 var relativeBlock = block.getRelative(it)
 
-                blockFaces.forEach {
-                    var nextRelativeBlock = relativeBlock.getRelative(it)
+//                blockFaces.forEach {
+//                    var nextRelativeBlock = relativeBlock.getRelative(it)
+//
+//                    if (!checkedBlocks.contains(nextRelativeBlock)) {
+//                        if (!unCheckedBlocks.contains(nextRelativeBlock)) {
+//                            if (isLog(nextRelativeBlock)) {
+//                                unCheckedBlocks.add(nextRelativeBlock)
+//                            }
+//                        }
+//                    }
+//                }
 
-                    if (!checkedBlocks.contains(nextRelativeBlock)) {
-                        if (!unCheckedBlocks.contains(nextRelativeBlock)) {
-                            if (isLog(nextRelativeBlock)) {
-                                unCheckedBlocks.add(nextRelativeBlock)
-                            }
-                        }
-                    }
-                }
+                blockFaces.filterNot { checkedBlocks.contains(relativeBlock.getRelative(it)) }
+                        .filterNot { unCheckedBlocks.contains(relativeBlock.getRelative(it)) }
+                        .filter { isLog(relativeBlock.getRelative(it)) }
+                        .forEach { unCheckedBlocks.add(relativeBlock.getRelative(it)) }
             }
         }
 
@@ -90,7 +96,7 @@ class BlockBreakEventListener(plugin: JavaPlugin) : Listener {
 
         if (itemBreakingFrag) {
             player.world.playSound(player.location, Sound.ITEM_SHIELD_BREAK, 1f, 1f)
-            player.itemInHand = ItemStack(Material.AIR)
+            player.inventory.itemInMainHand = ItemStack(Material.AIR)
             player.sendMessage("アイテムが壊れた")
         } else {
             msg.append("耐久値: ${maxDurability - durability} " +

@@ -1,36 +1,30 @@
 package config
 
+import com.squareup.moshi.Moshi
+import org.bukkit.configuration.file.YamlConfiguration
+import org.bukkit.plugin.java.JavaPlugin
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 
-data class Configs(
-        var reduce_durability_in_case_of_creative: Boolean = false,
-        var display_a_message_when_the_tool_is_broken: Boolean = true,
-        var display_a_message_when_the_durability_value_of_the_tool_decreases: Boolean = true
-)
+/**
+ * Created by masahiro on 2017/01/07.
+ */
+var plugin: JavaPlugin? = null
+var configs: Configs = Configs()
 
-fun loadConfigs(file: File) : Configs {
+fun loadConfigsFromJson(file: File) : Configs {
 
-    if (file.parentFile.exists().not()) {
+    if (!file.parentFile.exists()) {
         file.parentFile.mkdirs()
     }
 
-    if (file.exists().not()) {
-        val conf = Configs()
+    val adapter = Moshi.Builder().build().adapter(Configs::class.java)
+
+    if (!file.exists()) {
+        plugin?.getResource("config.json")?.copyTo(file.outputStream())
         file.createNewFile()
-        file.writeText(Yaml().dumpAsMap(conf))
-        return conf
+        return configs
     } else {
-        return Yaml().loadAs(file.readText(), Configs::class.java)
+        return adapter.fromJson(file.readText())
     }
-}
-
-var configs = Configs()
-
-fun onReduceCreativeDurability() = configs.reduce_durability_in_case_of_creative
-fun onMessageToolBroken() = configs.display_a_message_when_the_tool_is_broken
-fun onMessageToolDurability() = configs.display_a_message_when_the_durability_value_of_the_tool_decreases
-
-fun main(args: Array<String>) {
-    println(loadConfigs(File("config.yml")))
 }
