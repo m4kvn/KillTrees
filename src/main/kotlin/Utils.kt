@@ -32,12 +32,11 @@ fun <T : Event> callEvent(event: T) : T {
     return event.apply { plugin?.server?.pluginManager?.callEvent(event) }
 }
 
-/**
- * 自分を含めた3x3x3空間の隣接した27ブロックを取得する
- */
 fun getRelativeBlocks(block: Block, type: Material) : List<Block> {
+    val a = configs.rangeBreakBlock * -1
+    val b = configs.rangeBreakBlock
     return mutableListOf<Block>()
-            .apply { for (x in -1..1) for (y in -1..1) for (z in -1..1) add(block.getRelative(x, y, z)) }
+            .apply { for (x in a..b) for (y in a..b) for (z in a..b) add(block.getRelative(x, y, z)) }
             .filter { it.type == type }
             .toList()
 }
