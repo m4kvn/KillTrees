@@ -1,3 +1,4 @@
+import config.configs
 import config.plugin
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -42,3 +43,5 @@ fun getRelativeBlocks(block: Block, type: Material) : List<Block> {
 }
 
 fun info(message: String)  = plugin?.run { this.logger.info(message) }
+
+fun isNotMax(blocks: Collection<Block>) : Boolean = blocks.size < configs.maxBlockAmount

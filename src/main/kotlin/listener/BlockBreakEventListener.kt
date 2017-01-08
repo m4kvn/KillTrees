@@ -6,6 +6,7 @@ import events.*
 import getRelativeBlocks
 import haveAxe
 import isLog
+import isNotMax
 import org.bukkit.GameMode
 import org.bukkit.block.Block
 import org.bukkit.event.EventHandler
@@ -32,7 +33,7 @@ class BlockBreakEventListener : Listener {
             val checkedBlocks = this
             val blockType = event.block.type
 
-            while (unCheckedBlocks.isNotEmpty()) {
+            while (unCheckedBlocks.isNotEmpty() && isNotMax(checkedBlocks)) {
                 val block = unCheckedBlocks.first().apply {
                     unCheckedBlocks.remove(this)
                     checkedBlocks.add(this)
