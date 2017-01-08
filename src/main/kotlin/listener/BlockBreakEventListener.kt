@@ -3,6 +3,7 @@ package listener
 import callEvent
 import config.configs
 import events.*
+import getRangeTo
 import getRelativeBlocks
 import haveAxe
 import isLog
@@ -42,7 +43,7 @@ class BlockBreakEventListener : Listener {
                 unCheckedBlocks.addAll(getRelativeBlocks(block, blockType)
                         .filterNot { checkedBlocks.contains(it) })
             }
-        }.toList()
+        }.toList().sortedBy { block -> block.getRangeTo(event.player) }
 
         val tool = event.player.inventory.itemInMainHand
 

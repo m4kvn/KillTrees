@@ -44,3 +44,5 @@ fun getRelativeBlocks(block: Block, type: Material) : List<Block> {
 fun info(message: String)  = plugin?.run { this.logger.info(message) }
 
 fun isNotMax(blocks: Collection<Block>) : Boolean = blocks.size < configs.maxBlockAmount
+
+fun Block.getRangeTo(player: Player) : Double = Math.sqrt(((x * x) + (y * y) + (z * z)).toDouble())
