@@ -1,22 +1,21 @@
 package events
 
-import org.bukkit.entity.Player
+import config.configs
+import getRemainingDurability
 
 /**
  * Created by masahiro on 2017/01/08.
  */
-class TreeKillMessageEvent(
+class TreeKillMessageEvent(event: TreeKillEvent) : BaseCancellableEvent() {
 
-        val message: String,
-        val player: Player
+    val player = event.player
+    val tool = event.tool
+    val blocks = event.blocks
 
-) : BaseCancellableEvent() {
-
-    fun sendMessage() : TreeKillMessageEvent {
-        return this.apply {
-            if (isNotCancelled.and(message.isNotBlank())) {
-                player.sendMessage(message)
-            }
+    var message = buildString {
+        if (configs.onToolDurabilityMsg) {
+            append("耐久値: ${tool.getRemainingDurability()}, ")
+            append("ブロック数: ${blocks.size}")
         }
     }
 }

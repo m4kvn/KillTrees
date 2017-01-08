@@ -1,15 +1,9 @@
 package listener
 
-import callEvent
-import config.configs
-import events.*
-import getRangeTo
-import getRelativeBlocks
+import call
+import events.TreeKillEvent
 import haveAxe
 import isLog
-import isNotMax
-import org.bukkit.GameMode
-import org.bukkit.block.Block
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -25,61 +19,10 @@ class BlockBreakEventListener : Listener {
     fun onBlockBreak(event: BlockBreakEvent) {
 
         when {
-            !isLog(event.block)    -> return
-            !haveAxe(event.player) -> return
+            !event.block.isLog()    -> return
+            !event.player.haveAxe() -> return
         }
 
-        val blocks = mutableSetOf<Block>().apply {
-            val unCheckedBlocks = mutableSetOf(event.block)
-            val checkedBlocks = this
-            val blockType = event.block.type
-
-            while (unCheckedBlocks.isNotEmpty() && isNotMax(checkedBlocks)) {
-                val block = unCheckedBlocks.first().apply {
-                    unCheckedBlocks.remove(this)
-                    checkedBlocks.add(this)
-                }
-
-                unCheckedBlocks.addAll(getRelativeBlocks(block, blockType)
-                        .filterNot { checkedBlocks.contains(it) })
-            }
-        }.toList().sortedBy { block -> block.getRangeTo(event.player) }
-
-        val tool = event.player.inventory.itemInMainHand
-
-        var isToolBreak = tool.durability + blocks.size >= tool.type.maxDurability
-
-        var overBlockAmount = if (isToolBreak) tool.durability + blocks.size - tool.type.maxDurability else 0
-
-        var finalBlockAmount = blocks.size - overBlockAmount
-
-        if (event.player.gameMode == GameMode.CREATIVE) {
-            if (!configs.onCreativeDurabilityReduce) {
-                isToolBreak = false
-                overBlockAmount = 0
-                finalBlockAmount = 0
-            }
-        }
-
-        val finalBlocks = blocks.toMutableList().apply {
-            if (isToolBreak) kotlin.repeat(overBlockAmount) { removeAt(lastIndex) }
-        }
-
-        callEvent(BreakBlocksEvent(finalBlocks, tool)).breakBlocks()
-
-        var message = ""
-
-        if (isToolBreak) {
-            callEvent(BreakToolEvent(event.player)).breakTool()
-            if (configs.onToolBrokenMsg) message = "道具が壊れました, ブロック数: ${finalBlocks.size}"
-        } else {
-            callEvent(ChangeToolDurabilityEvent(tool, finalBlockAmount)).changeToolDurability()
-            if (configs.onToolDurabilityMsg) {
-                message = "耐久値: ${tool.type.maxDurability - tool.durability}, " +
-                        "ブロック数: ${finalBlocks.size}"
-            }
-        }
-
-        callEvent(TreeKillMessageEvent(message, event.player)).sendMessage()
+        TreeKillEvent(event).call()
     }
 }

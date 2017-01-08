@@ -16,4 +16,6 @@ public abstract class BaseCancellableEvent extends BaseEvent implements Cancella
     public void setCancelled(boolean cancel) { isCancelled = cancel; }
 
     public boolean isNotCancelled() { return !isCancelled; }
+
+    public void cancel() { isCancelled = true; }
 }

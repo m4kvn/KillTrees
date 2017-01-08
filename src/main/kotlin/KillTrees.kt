@@ -1,7 +1,7 @@
-import config.configs
 import config.loadConfigsFromJson
 import config.plugin
 import listener.BlockBreakEventListener
+import listener.TreeKillEventLisntener
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
@@ -16,7 +16,8 @@ class KillTrees : JavaPlugin() {
 
         plugin = this
 
-        server.pluginManager.registerEvents(BlockBreakEventListener(), this)
+        BlockBreakEventListener().register(this)
+        TreeKillEventLisntener().register(this)
 
         loadConfigsFromJson(File(dataFolder, "config.json"))
     }
