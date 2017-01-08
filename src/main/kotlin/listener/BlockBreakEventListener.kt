@@ -1,9 +1,9 @@
 package listener
 
-import blockFaces
 import callEvent
 import config.configs
 import events.*
+import getRelativeBlocks
 import haveAxe
 import isLog
 import org.bukkit.GameMode
@@ -27,30 +27,21 @@ class BlockBreakEventListener : Listener {
             !haveAxe(event.player) -> return
         }
 
-        val blocks = mutableListOf<Block>().apply {
-            val unCheckedBlocks = mutableListOf(event.block)
+        val blocks = mutableSetOf<Block>().apply {
+            val unCheckedBlocks = mutableSetOf(event.block)
             val checkedBlocks = this
+            val blockType = event.block.type
 
             while (unCheckedBlocks.isNotEmpty()) {
-                val block = unCheckedBlocks.removeAt(0).apply { checkedBlocks.add(this) }
-
-                blockFaces.forEach {
-                    val relativeBlock = block.getRelative(it)
-
-                    if (checkedBlocks.size >= configs.maxBlockAmount) return@apply
-
-                    blockFaces
-                            .filterNot { checkedBlocks.contains(relativeBlock.getRelative(it)) }
-                            .filterNot { unCheckedBlocks.contains(relativeBlock.getRelative(it)) }
-                            .filter { isLog(relativeBlock.getRelative(it)) }
-                            .forEach {
-                                unCheckedBlocks.add(relativeBlock.getRelative(it))
-
-                                if (checkedBlocks.size >= configs.maxBlockAmount) return@apply
-                            }
+                val block = unCheckedBlocks.first().apply {
+                    unCheckedBlocks.remove(this)
+                    checkedBlocks.add(this)
                 }
+
+                unCheckedBlocks.addAll(getRelativeBlocks(block, blockType)
+                        .filterNot { checkedBlocks.contains(it) })
             }
-        }
+        }.toList()
 
         val tool = event.player.inventory.itemInMainHand
 

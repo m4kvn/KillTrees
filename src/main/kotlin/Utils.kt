@@ -1,7 +1,6 @@
 import config.plugin
 import org.bukkit.Material
 import org.bukkit.block.Block
-import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 
@@ -28,16 +27,18 @@ fun isLog(block: Block): Boolean {
     }
 }
 
-val blockFaces = listOf<BlockFace>(
-        BlockFace.SELF,
-        BlockFace.UP,
-        BlockFace.DOWN,
-        BlockFace.NORTH,
-        BlockFace.SOUTH,
-        BlockFace.WEST,
-        BlockFace.EAST
-)
-
 fun <T : Event> callEvent(event: T) : T {
     return event.apply { plugin?.server?.pluginManager?.callEvent(event) }
 }
+
+/**
+ * 自分を含めた3x3x3空間の隣接した27ブロックを取得する
+ */
+fun getRelativeBlocks(block: Block, type: Material) : List<Block> {
+    return mutableListOf<Block>()
+            .apply { for (x in -1..1) for (y in -1..1) for (z in -1..1) add(block.getRelative(x, y, z)) }
+            .filter { it.type == type }
+            .toList()
+}
+
+fun info(message: String)  = plugin?.run { this.logger.info(message) }
