@@ -45,4 +45,7 @@ fun info(message: String)  = plugin?.run { this.logger.info(message) }
 
 fun isNotMax(blocks: Collection<Block>) : Boolean = blocks.size < configs.maxBlockAmount
 
-fun Block.getRangeTo(player: Player) : Double = Math.sqrt(((x * x) + (y * y) + (z * z)).toDouble())
+fun Block.getRangeTo(player: Player) : Double
+        = Math.sqrt(((x - player.location.x) * (x - player.location.x))
+                + ((y - player.location.y) * (y - player.location.y))
+                + ((z - player.location.z) * (z - player.location.z)))
