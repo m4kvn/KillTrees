@@ -1,8 +1,8 @@
 # __KillTrees__ is Minecraft Spigot Plugin
 
-| 対応バージョン |
-| :------------: |
-| spigot-1.11.*  |
+| 対応バージョン | ダウンロード |
+| :------------: | :----------: |
+| spigot-1.11.*  | [KillTrees-1.0.jar](https://github.com/MasahiroSaito/KillTrees/raw/master/com/MasahiroSaito/Spigot/KillTrees/1.0/KillTrees-1.0.jar) |
 
 ## 特徴
 
