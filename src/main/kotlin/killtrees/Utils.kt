@@ -30,10 +30,11 @@ fun Block.isLog(): Boolean {
     }
 }
 
+fun Block.getDamage() : Short = state.data.toItemStack().durability
+
 fun Block.isSameType(block: Block) : Boolean = type == block.type
 
-fun Block.isSameDamage(block: Block) : Boolean =
-        state.data.toItemStack().durability == block.state.data.toItemStack().durability
+fun Block.isSameDamage(block: Block) : Boolean = getDamage() == block.getDamage()
 
 fun Listener.register(plugin: JavaPlugin) = plugin.server.pluginManager.registerEvents(this, plugin)
 
