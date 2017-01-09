@@ -30,6 +30,11 @@ fun Block.isLog(): Boolean {
     }
 }
 
+fun Block.isSameType(block: Block) : Boolean = type == block.type
+
+fun Block.isSameDamage(block: Block) : Boolean =
+        state.data.toItemStack().durability == block.state.data.toItemStack().durability
+
 fun Listener.register(plugin: JavaPlugin) = plugin.server.pluginManager.registerEvents(this, plugin)
 
 fun <T : Event> T.call(plugin: JavaPlugin) : T = this.apply { plugin.server.pluginManager.callEvent(this) }
@@ -47,7 +52,8 @@ fun Block.getSameRelativeBlocks() : List<Block> {
     val b = configs.rangeBreakBlock
     return mutableListOf<Block>()
             .apply { for (x in a..b) for (y in a..b) for (z in a..b) add(getRelative(x, y, z)) }
-            .filter { it.type == type }
+            .filter { isSameType(it) }
+            .filter { isSameDamage(it) }
             .toList()
 }
 
