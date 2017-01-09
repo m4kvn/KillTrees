@@ -1,29 +1,11 @@
-group 'com.MasahiroSaito.Spigot'
-version '1.0-SNAPSHOT'
-
-buildscript {
-    ext.kotlin_version = '1.0.5'
-
-    repositories {
-        mavenCentral()
-        maven {
-            name = "spigot-api"
-            url "https://hub.spigotmc.org/nexus/content/groups/public"
-        }
-        maven {
-            name = "bungeecord-chat"
-            url "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
-    }
-    dependencies {
-        classpath "net.md-5:bungeecord-chat:1.10-SNAPSHOT"
-        classpath "org.spigotmc:spigot-api:1.11-R0.1-SNAPSHOT"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
 apply plugin: 'java'
 apply plugin: 'kotlin'
+
+group 'com.MasahiroSaito.Spigot'
+version '1.0'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 configurations {
     embed
@@ -33,27 +15,53 @@ configurations {
 repositories {
     mavenCentral()
     maven {
-        name = "spigot-api"
-        url "https://hub.spigotmc.org/nexus/content/groups/public"
+        name = 'spigotmc-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
     }
     maven {
-        name = "bungeecord-chat"
-        url "https://oss.sonatype.org/content/repositories/snapshots/"
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
     }
 }
 
 dependencies {
-    compile "net.md-5:bungeecord-chat:1.10-SNAPSHOT"
-    compile "org.spigotmc:spigot-api:1.11-R0.1-SNAPSHOT"
+    compile "org.spigotmc:spigot-api:1.11.2-R0.1-SNAPSHOT"
     embed "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+
+import org.apache.tools.ant.filters.ReplaceTokens
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter ReplaceTokens, tokens: [version: version]
+    }
+}
+
+buildscript {
+    ext.kotlin_version = '1.0.6'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+sourceSets {
+    main.kotlin.srcDirs += 'src/main/java'
 }
 
 jar {
     from configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }
 }
 
-sourceSets {
-    main.kotlin.srcDirs = ['src/main/java', 'src/main/kotlin']
-    main.resources.srcDirs = ['src/main/resources']
+
+apply plugin: 'maven'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "file:${projectDir}")
+        }
+    }
 }

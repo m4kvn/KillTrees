@@ -1,4 +1,7 @@
-.gradle
+*.jar
 .idea
+.gradle
+!gradle-wrapper.jar
 build
-gradle-wrapper.properties
+gradle/wrapper/gradle-wrapper.properties
+!KillTrees-*.jar

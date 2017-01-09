@@ -1,6 +1,7 @@
-import config.configs
-import config.isNotMax
-import config.plugin
+package killtrees
+
+import killtrees.config.configs
+import killtrees.config.isNotMax
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -9,10 +10,6 @@ import org.bukkit.event.Event
 import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
-
-/**
- * Created by masahiro on 2017/01/08.
- */
 
 fun Player.haveAxe(): Boolean {
     when (itemInMainHand().type) {
@@ -33,11 +30,15 @@ fun Block.isLog(): Boolean {
     }
 }
 
+fun Block.getDamage() : Short = state.data.toItemStack().durability
+
+fun Block.isSameType(block: Block) : Boolean = type == block.type
+
+fun Block.isSameDamage(block: Block) : Boolean = getDamage() == block.getDamage()
+
 fun Listener.register(plugin: JavaPlugin) = plugin.server.pluginManager.registerEvents(this, plugin)
 
-fun <T : Event> T.call() : T = this.apply { plugin?.server?.pluginManager?.callEvent(this) }
-
-fun info(message: String)  = plugin?.run { this.logger.info(message) }
+fun <T : Event> T.call(plugin: JavaPlugin) : T = this.apply { plugin.server.pluginManager.callEvent(this) }
 
 fun ItemStack.isBreak(blocks: List<Block>) : Boolean = durability + blocks.size >= type.maxDurability
 
@@ -52,7 +53,8 @@ fun Block.getSameRelativeBlocks() : List<Block> {
     val b = configs.rangeBreakBlock
     return mutableListOf<Block>()
             .apply { for (x in a..b) for (y in a..b) for (z in a..b) add(getRelative(x, y, z)) }
-            .filter { it.type == type }
+            .filter { isSameType(it) }
+            .filter { isSameDamage(it) }
             .toList()
 }
 

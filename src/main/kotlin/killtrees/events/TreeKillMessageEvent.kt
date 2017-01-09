@@ -1,12 +1,9 @@
-package events
+package killtrees.events
 
-import config.configs
-import getRemainingDurability
+import killtrees.config.configs
+import killtrees.getRemainingDurability
 
-/**
- * Created by masahiro on 2017/01/08.
- */
-class TreeKillMessageEvent(event: TreeKillEvent) : BaseCancellableEvent() {
+class TreeKillMessageEvent(val event: TreeKillEvent) : BaseCancellableEvent() {
 
     val player = event.player
     val tool = event.tool
