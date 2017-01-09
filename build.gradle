@@ -2,7 +2,7 @@ group 'com.MasahiroSaito.Spigot'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.0.5'
+    ext.kotlin_version = '1.0.6'
 
     repositories {
         mavenCentral()
@@ -56,4 +56,14 @@ jar {
 sourceSets {
     main.kotlin.srcDirs = ['src/main/java', 'src/main/kotlin']
     main.resources.srcDirs = ['src/main/resources']
+}
+
+apply plugin: 'maven'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "file:${projectDir}")
+        }
+    }
 }
