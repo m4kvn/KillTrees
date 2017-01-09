@@ -1,10 +1,7 @@
-package events;
+package killtrees.events;
 
 import org.bukkit.event.Cancellable;
 
-/**
- * Created by masahiro on 2017/01/08.
- */
 public abstract class BaseCancellableEvent extends BaseEvent implements Cancellable {
 
     private boolean isCancelled = false;

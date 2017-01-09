@@ -1,19 +1,16 @@
-package listener
+package killtrees.listener
 
-import call
-import events.TreeKillEvent
-import haveAxe
-import isLog
+import killtrees.call
+import killtrees.events.TreeKillEvent
+import killtrees.haveAxe
+import killtrees.isLog
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.plugin.java.JavaPlugin
 
-/**
- * Created by masahiro on 2016/12/29.
- */
-
-class BlockBreakEventListener : Listener {
+class BlockBreakEventListener(val plugin: JavaPlugin) : Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     fun onBlockBreak(event: BlockBreakEvent) {
@@ -23,6 +20,6 @@ class BlockBreakEventListener : Listener {
             !event.player.haveAxe() -> return
         }
 
-        TreeKillEvent(event).call()
+        TreeKillEvent(event, plugin).call(plugin)
     }
 }

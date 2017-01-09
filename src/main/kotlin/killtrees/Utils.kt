@@ -1,6 +1,7 @@
-import config.configs
-import config.isNotMax
-import config.plugin
+package killtrees
+
+import killtrees.config.configs
+import killtrees.config.isNotMax
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -9,10 +10,6 @@ import org.bukkit.event.Event
 import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
-
-/**
- * Created by masahiro on 2017/01/08.
- */
 
 fun Player.haveAxe(): Boolean {
     when (itemInMainHand().type) {
@@ -35,9 +32,7 @@ fun Block.isLog(): Boolean {
 
 fun Listener.register(plugin: JavaPlugin) = plugin.server.pluginManager.registerEvents(this, plugin)
 
-fun <T : Event> T.call() : T = this.apply { plugin?.server?.pluginManager?.callEvent(this) }
-
-fun info(message: String)  = plugin?.run { this.logger.info(message) }
+fun <T : Event> T.call(plugin: JavaPlugin) : T = this.apply { plugin.server.pluginManager.callEvent(this) }
 
 fun ItemStack.isBreak(blocks: List<Block>) : Boolean = durability + blocks.size >= type.maxDurability
 

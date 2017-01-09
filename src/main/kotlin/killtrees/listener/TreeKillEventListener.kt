@@ -1,19 +1,15 @@
-package listener
+package killtrees.listener
 
-import calcBreakBlocks
-import config.canReduceDurability
-import events.*
-import getRemainingDurability
-import info
-import isBreak
+import killtrees.calcBreakBlocks
+import killtrees.config.canReduceDurability
+import killtrees.events.*
+import killtrees.getRemainingDurability
+import killtrees.isBreak
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 
-/**
- * Created by masahiro on 2017/01/08.
- */
-class TreeKillEventLisntener : Listener {
+class TreeKillEventListener : Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun onTreeKillEvent(event: TreeKillEvent) {

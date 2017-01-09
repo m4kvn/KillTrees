@@ -1,10 +1,6 @@
-package config
+package killtrees.config
 
 import com.google.gson.annotations.SerializedName
-
-/**
- * Created by masahiro on 2017/01/07.
- */
 
 data class Configs(
 

@@ -1,11 +1,8 @@
-package events;
+package killtrees.events;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-/**
- * Created by masahiro on 2017/01/08.
- */
 public abstract class BaseEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
