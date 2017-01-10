@@ -1,7 +1,7 @@
 package killtrees.events
 
 import killtrees.call
-import killtrees.itemInMainHand
+import killtrees.utils.itemInMainHand
 import org.bukkit.block.Block
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.plugin.java.JavaPlugin

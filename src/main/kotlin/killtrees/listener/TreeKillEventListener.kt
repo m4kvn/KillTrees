@@ -3,8 +3,8 @@ package killtrees.listener
 import killtrees.calcBreakBlocks
 import killtrees.config.canReduceDurability
 import killtrees.events.*
-import killtrees.getRemainingDurability
-import killtrees.isBreak
+import killtrees.utils.getRemainingDurability
+import killtrees.utils.isBreak
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener

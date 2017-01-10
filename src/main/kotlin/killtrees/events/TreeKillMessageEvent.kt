@@ -1,7 +1,7 @@
 package killtrees.events
 
 import killtrees.config.configs
-import killtrees.getRemainingDurability
+import killtrees.utils.getRemainingDurability
 
 class TreeKillMessageEvent(val event: TreeKillEvent) : BaseCancellableEvent() {
 

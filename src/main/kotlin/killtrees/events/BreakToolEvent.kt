@@ -4,9 +4,6 @@ import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.inventory.ItemStack
 
-/**
- * Created by masahiro on 2017/01/08.
- */
 class BreakToolEvent(val event: TreeKillEvent) : BaseCancellableEvent() {
 
     val isToolBreak = event.isToolBreak

@@ -1,9 +1,9 @@
 package killtrees.listener
 
-import killtrees.call
+import killtrees.*
+import killtrees.config.isInValidType
 import killtrees.events.TreeKillEvent
-import killtrees.haveAxe
-import killtrees.isLog
+import killtrees.utils.itemInMainHand
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -16,8 +16,8 @@ class BlockBreakEventListener(val plugin: JavaPlugin) : Listener {
     fun onBlockBreak(event: BlockBreakEvent) {
 
         when {
-            !event.block.isLog()    -> return
-            !event.player.haveAxe() -> return
+            event.block.isInValidType()                   -> return
+            event.player.itemInMainHand().isInValidType() -> return
         }
 
         TreeKillEvent(event, plugin).call(plugin)

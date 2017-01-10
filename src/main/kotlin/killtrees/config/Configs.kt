@@ -1,6 +1,8 @@
 package killtrees.config
 
+import org.bukkit.Material
 import com.google.gson.annotations.SerializedName
+import org.bukkit.TreeSpecies
 
 data class Configs(
 
@@ -14,5 +16,23 @@ data class Configs(
         val maxBlockAmount: Int = 200,
 
         @SerializedName("破壊する隣接ブロックの距離")
-        val rangeBreakBlock: Int = 1
+        val rangeBreakBlock: Int = 1,
+
+        @SerializedName("破壊できる原木ブロックの種類")
+        val breakWoodTypes: List<String> = TreeSpecies.values().map { it.name },
+
+        @SerializedName("破壊できるブロックの種類を追加する")
+        val breakOtherTypes: List<String> = emptyList(),
+
+        @SerializedName("使える道具の種類")
+        val validToolTypes: List<String> = listOf(
+                Material.DIAMOND_AXE.name,
+                Material.STONE_AXE.name,
+                Material.WOOD_AXE.name,
+                Material.IRON_AXE.name,
+                Material.GOLD_AXE.name
+        ),
+
+        @SerializedName("使える道具を種類を追加する")
+        val validOtherToolTypes: List<String> = emptyList()
 )
