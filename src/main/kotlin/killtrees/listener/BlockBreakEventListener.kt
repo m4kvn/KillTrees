@@ -3,6 +3,7 @@ package killtrees.listener
 import killtrees.*
 import killtrees.config.isInValidType
 import killtrees.events.TreeKillEvent
+import killtrees.utils.call
 import killtrees.utils.itemInMainHand
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority

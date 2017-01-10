@@ -1,15 +1,12 @@
 package killtrees.utils
 
+import killtrees.config.isNotMax
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.material.Leaves
 import org.bukkit.material.Wood
 
-fun Block.getDamage() : Short = state.data.toItemStack().durability
-
 fun Block.isSameType(block: Block) : Boolean = type == block.type
-
-fun Block.isSameDamage(block: Block) : Boolean = getDamage() == block.getDamage()
 
 fun Block.isWood() : Boolean = this.state.data is Wood
 
@@ -37,3 +34,18 @@ fun Wood.isSameType(block: Block) : Boolean =
 
 fun Leaves.isSameType(block: Block) : Boolean =
         if (block.isLeaves()) (block.state.data as Leaves).species == species else false
+
+fun Block.calcBreakBlocks(range: Int) : List<Block> {
+    val unCheckedBlocks = mutableSetOf(this)
+    val checkedBlocks = mutableSetOf<Block>()
+
+    while (unCheckedBlocks.isNotEmpty() && checkedBlocks.isNotMax()) {
+        val block = unCheckedBlocks.first().apply {
+            unCheckedBlocks.remove(this)
+            checkedBlocks.add(this)
+        }
+        unCheckedBlocks.addAll(block.getSameRelatives(range)
+                .filterNot { checkedBlocks.contains(it) })
+    }
+    return checkedBlocks.toList()
+}

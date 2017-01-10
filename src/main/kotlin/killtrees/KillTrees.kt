@@ -3,6 +3,7 @@ package killtrees
 import killtrees.config.*
 import killtrees.listener.BlockBreakEventListener
 import killtrees.listener.TreeKillEventListener
+import killtrees.utils.register
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 

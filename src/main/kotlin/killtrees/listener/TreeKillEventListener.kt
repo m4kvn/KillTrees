@@ -1,7 +1,8 @@
 package killtrees.listener
 
-import killtrees.calcBreakBlocks
+import killtrees.utils.calcBreakBlocks
 import killtrees.config.canReduceDurability
+import killtrees.config.configs
 import killtrees.events.*
 import killtrees.utils.getRemainingDurability
 import killtrees.utils.isBreak
@@ -16,7 +17,7 @@ class TreeKillEventListener : Listener {
         if (event.isCancelled) return
 
         event.callTreeKillEvent(CalcBreakBlock(event)).apply {
-            if (isNotCancelled) event.blocks = block.calcBreakBlocks(player)
+            if (isNotCancelled) event.blocks = block.calcBreakBlocks(configs.rangeBreakBlock)
             else event.cancel()
         }
 
