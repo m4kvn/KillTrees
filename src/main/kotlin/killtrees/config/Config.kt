@@ -30,7 +30,7 @@ fun Player.canReduceDurability() : Boolean = !isCreativeMode() || configs.onCrea
 
 fun Block.isValidType() : Boolean = when {
     isWood() -> configs.breakWoodTypes.contains((state.data as Wood).species.name)
-    else     -> configs.breakOtherTypes.contains(type.name)
+    else     -> configs.breakBlockTypes.contains(type.name)
 }
 
 fun Block.isInValidType() : Boolean = !isValidType()

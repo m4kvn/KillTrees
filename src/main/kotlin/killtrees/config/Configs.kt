@@ -21,8 +21,8 @@ data class Configs(
         @SerializedName("破壊できる原木ブロックの種類")
         val breakWoodTypes: List<String> = TreeSpecies.values().map { it.name },
 
-        @SerializedName("破壊できるブロックの種類を追加する")
-        val breakOtherTypes: List<String> = emptyList(),
+        @SerializedName("破壊できるブロックの種類")
+        val breakBlockTypes: List<String> = emptyList(),
 
         @SerializedName("使える道具の種類")
         val validToolTypes: List<String> = listOf(
@@ -31,8 +31,5 @@ data class Configs(
                 Material.WOOD_AXE.name,
                 Material.IRON_AXE.name,
                 Material.GOLD_AXE.name
-        ),
-
-        @SerializedName("使える道具を種類を追加する")
-        val validOtherToolTypes: List<String> = emptyList()
+        )
 )
